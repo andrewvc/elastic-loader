@@ -1,0 +1,8 @@
+TRY POST /foo {"_mapping": {}}
+BULK INDEX foo/bar
+{"user": "foo", "_id": 1}
+{"user": "baz", "_id": 3}
+ # Here we index again
+BULK INDEX foo/bar
+{"user": "bort"}
+{"ohai": "there", "_id": 4}
