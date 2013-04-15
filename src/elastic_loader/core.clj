@@ -21,6 +21,8 @@
   (fn [opts]
     (http/request (update-in opts [:url] #(str base-url "/" %)))))
 
+;; Tokenization
+
 (def line-tokenizers
   [{:name :index-docs 
     :match  #"BULK INDEX\s*(\w+)/(\w+)"
@@ -38,7 +40,6 @@
     :format (fn [_ __] nil )}
    ])
 
-
 (defn tokenizer-matcher
   "Match a tokenizer definition to a line"
   [{n :name m :match f :format} line]
@@ -48,7 +49,7 @@
 
 ;; Create a seq of parsing functions we can iterate through
 (def line-tokenizers
-  (filter (comp not nil?) (map #(partial tokenizer-matcher %) line-tokenizers)))
+  (map #(partial tokenizer-matcher %) line-tokenizers))
 
 (defn attempt-tokenize
   [tokenizer line-str line-num]
@@ -61,15 +62,15 @@
 (defn tokenize-line
   "Check if the given line is a document or an index declaration"
   [{:keys [line-num line-str]}]
-  ; Use a loop here for fine control over how many tokenizers we match
-  ; We could use say 'filter' but lazy seqs chunk, and that's
-  ; inefficient
+                                        ; Use a loop here for fine control over how many tokenizers we match
+                                        ; We could use say 'filter' but lazy seqs chunk, and that's
+                                        ; inefficient
   (loop [tokenizers line-tokenizers]
-      (if-let [res (attempt-tokenize (first tokenizers) line-str line-num)]
-        (with-meta res {:line-num line-num})
-        (if (empty? (rest tokenizers))
-          (throw+ {:level :fatal :message (format "Input Line %s un-tokenizable: '%s'" line-num line-str)})
-          (recur (rest tokenizers)))) ))
+    (if-let [res (attempt-tokenize (first tokenizers) line-str line-num)]
+      (with-meta res {:line-num line-num})
+      (if (empty? (rest tokenizers))
+        (throw+ {:level :fatal :message (format "Input Line %s un-tokenizable: '%s'" line-num line-str)})
+        (recur (rest tokenizers)))) ))
 
 (defn tag-line-num
   [l]
@@ -82,6 +83,8 @@
        (map tag-line-num)       
        (map tokenize-line)
        (filter #(not= :blank (first %)))))
+
+;; Parsing
 
 (defn parse-group-tokens
   "Group a token stream into tokens needed for creating statements"
@@ -126,6 +129,8 @@
   [tokens]
   (map parse-statementize-tokens
        (parse-group-tokens tokens)))
+
+;; Execution
 
 (defn exec-http-req
   [{:keys [client]} {:keys [method path body is-try]}]
@@ -174,11 +179,11 @@
 (defn execute
   [env statements]
   (try+
-    (dorun (map (partial exec-statement env) statements))
-    (catch [:level :fatal] {:keys [message exception] :as k}
-      (log/fatal (or message exception))
-      (when exception (.printStackTrace exception))
-      (System/exit 1))))
+   (dorun (map (partial exec-statement env) statements))
+   (catch [:level :fatal] {:keys [message exception] :as k}
+     (log/fatal (or message exception))
+     (when exception (.printStackTrace exception))
+     (System/exit 1))))
 
 (defn -main   
   [filename base-url & argv]
@@ -190,5 +195,3 @@
           (tokenize)
           (parse)
           (env-exec)))))
-
-;(-main "test_import" "http://localhost:9200")
