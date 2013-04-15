@@ -22,8 +22,9 @@
   (fn [opts]
     (http/request (update-in opts [:url] #(str base-url "/" %)))))
 
-;; Tokenization
+;; Grammar
 
+;; The token-types for the grammar are defined here
 (def line-tokenizers
   [{:name :index-docs 
     :match  #"BULK INDEX\s*(\w+)/(\w+)"
@@ -41,6 +42,12 @@
     :format (fn [_ __] nil )}
    ])
 
+;; Statements are broken started when these tokens are encountered
+;; and keep running till the next is seen
+(def statement-delims #{:index-docs :http-req})
+
+;; Tokenization
+
 (defn tokenizer-matcher
   "Match a tokenizer definition to a line"
   [{n :name m :match f :format} line]
@@ -48,8 +55,9 @@
     (concat [n] (f line matches))
     nil))
 
-;; Create a seq of parsing functions we can iterate through
+
 (def line-tokenizers
+  "Create a seq of parsing functions we can iterate through"
   (map #(partial tokenizer-matcher %) line-tokenizers))
 
 (defn attempt-tokenize
@@ -63,9 +71,9 @@
 (defn tokenize-line
   "Check if the given line is a document or an index declaration"
   [{:keys [line-num line-str]}]
-                                        ; Use a loop here for fine control over how many tokenizers we match
-                                        ; We could use say 'filter' but lazy seqs chunk, and that's
-                                        ; inefficient
+  ;; Use a loop here for fine control over how many tokenizers we match
+  ;; We could use say 'filter' but lazy seqs chunk, and that's
+  ;; inefficient
   (loop [tokenizers line-tokenizers]
     (if-let [res (attempt-tokenize (first tokenizers) line-str line-num)]
       (with-meta res {:line-num line-num})
@@ -74,11 +82,14 @@
         (recur (rest tokenizers)))) ))
 
 (defn tag-line-num
+  "Turn line strings into hashes of :line-str and :line-num"  
   [l]
   (let [counter (atom 0)]
     {:line-num (swap! counter inc) :line-str l}))
 
 (defn tokenize
+  "Turns a seq of lines into a seq of tokens of the form
+  (:token-type & token-args)"
   [lines]
   (->> lines
        (map tag-line-num)       
@@ -93,7 +104,7 @@
   (let [last-start (atom [nil 0])]
     (partition-by
      (fn [[token-type & _]]
-       (if (#{:index-docs :http-req} token-type)
+       (if (statement-delims token-type)
          (swap! last-start (fn [[_ gen]] [token-type (inc gen)]))
          @last-start))
      tokens)))
@@ -117,6 +128,8 @@
    :http-req http-req-statementizer})
 
 (defn parse-statementize-tokens
+  "Turns a seq of tokens grouped appropriately for a statement
+   into a seq of statements"
   [[[s-type & s-args :as first-token] & r-tokens]]
   (if-let [statementizer (statementizers s-type)]
     (with-meta
@@ -127,6 +140,9 @@
              :message (format "No statementizer for: %s" s-type)})))
 
 (defn parse
+  "Returns a seq of statements from a seq of tokens. Statements are
+   maps of data suitable for execution and have metadata for both
+   :statement-type and :line-num."
   [tokens]
   (map parse-statementize-tokens
        (parse-group-tokens tokens)))
@@ -162,12 +178,14 @@
     (log/info (format "BULK INDEX /%s/%s" index type))
     (client {:method :post :url "/_bulk" :body body})))
 
+
 (def statement-executors
   {:http-req exec-http-req
    :index-docs exec-index-docs
    :blank (fn [_ __])})
 
 (defn exec-statement
+  "Executes a single parsed statement"
   [env statement]
   (let [{st-type :statement-type line-num :line-num} (meta statement)
         st-executor (statement-executors st-type)]
@@ -178,6 +196,7 @@
                          line-num message))))))
 
 (defn execute
+  "Executes a seq of statements from 'parse'"
   [env statements]
   (try+
    (dorun (map (partial exec-statement env) statements))
