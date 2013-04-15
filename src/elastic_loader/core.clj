@@ -1,10 +1,11 @@
 (ns elastic-loader.core
   (:require [clj-http.client :as http]
-           [cheshire.core :as chesh]
-           [clojure.tools.logging :as log]
-           [clojure.string :as string]           
-           [clojure.java.io :as java-io])
+            [cheshire.core :as chesh]
+            [clojure.tools.logging :as log]
+            [clojure.string :as string]           
+            [clojure.java.io :as java-io])
   (:use [slingshot.slingshot :only [throw+ try+]]))
+
 ;;
 ;; OVERVIEW
 ;;
