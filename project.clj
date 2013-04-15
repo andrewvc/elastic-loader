@@ -1,6 +1,6 @@
-(defproject elastic-loader "0.2.0"
+(defproject elastic-loader "0.3.0"
   :description "A tool for importing docs into elasticsearch"
-  :url "http://example.com/FIXME"
+  :url "https://github.com/andrewvc/elastic-loader"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[org.clojure/clojure "1.5.0"]

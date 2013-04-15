@@ -4,7 +4,7 @@ A utility for bulk loading data into elasticsearch. It can also execute multiple
 
 ## Download
 
-Current Version: [elastic-loader-0.2.0.jar](http://elastic-loader.s3.amazonaws.com/elastic-loader-0.2.0.jar)
+Current Version: [elastic-loader-0.3.0.jar](http://elastic-loader.s3.amazonaws.com/elastic-loader-0.3.0.jar)
 
 ## Usage
 
