@@ -4,7 +4,8 @@
             [clojure.tools.logging :as log]
             [clojure.string :as string]           
             [clojure.java.io :as java-io])
-  (:use [slingshot.slingshot :only [throw+ try+]]))
+  (:use [slingshot.slingshot :only [throw+ try+]])
+  (:gen-class))
 
 ;;
 ;; OVERVIEW
