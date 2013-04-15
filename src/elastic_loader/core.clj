@@ -80,7 +80,8 @@
   [lines]
   (->> lines
        (map tag-line-num)       
-       (map tokenize-line)))
+       (map tokenize-line)
+       (filter #(not= :blank (first %)))))
 
 (defn parse-group-tokens
   "Group a token stream into tokens needed for creating statements"
