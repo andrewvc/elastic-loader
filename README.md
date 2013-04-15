@@ -30,6 +30,8 @@ DELETE /foo/bar/4
 
 The format allows you to issue arbitrary HTTP requests and to use the bulk API to add new documents as well with a more concise format. You specify the index and document type once, and subsequent documents will be imported. Each document should probably specify the `_id` field unless you truly want random IDs from elasticsearch.
 
+This project was created to aid the process of running examples for the book [Exploring Elasticsearch](http://exploring-elasticsearch.com).
+
 ## License
 
 Copyright © 2013 Andrew Cholakian
