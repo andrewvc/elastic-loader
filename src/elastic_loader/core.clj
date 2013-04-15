@@ -151,9 +151,9 @@
                                   base)]
                      [es-cmd d]))
         lines (map chesh/generate-string (flatten (map tupleize documents)))
-        body (string/join "\n" lines)]
+        body (str (string/join "\n" lines) "\n")]
     (log/info (format "BULK INDEX /%s/%s" index type))
-    [client {:method :post :url "/_bulk" :body body}]))
+    (client {:method :post :url "/_bulk" :body body})))
 
 (def statement-executors
   {:http-req exec-http-req
