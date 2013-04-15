@@ -178,7 +178,6 @@
     (log/info (format "BULK INDEX /%s/%s" index type))
     (client {:method :post :url "/_bulk" :body body})))
 
-
 (def statement-executors
   {:http-req exec-http-req
    :index-docs exec-index-docs
@@ -205,13 +204,30 @@
      (when exception (.printStackTrace exception))
      (System/exit 1))))
 
-(defn -main   
-  [filename base-url & argv]
+(defn execute-line-seq
+  "Execute against a given line-seq in the specified env"
+  [lseq env]
+  (let [env-exec (partial execute env)]
+    (-> lseq
+        (tokenize)
+        (parse)
+        (env-exec))))
+
+(defmacro with-in-seq
+  "Checks the provided lseq argument to see if it is a filename
+   or nil. If nil, returns an lseq from *in*"
+  [binding f-arg & body]
+  `(if ~f-arg
+     (with-open [rdr# (java-io/reader ~f-arg)]
+       (let [~binding (line-seq rdr#)]
+         (log/info (str "Reading from " ~f-arg))
+         ~@body))
+     (let [~binding (line-seq (java-io/reader *in*))]
+       ~@body)))
+
+(defn -main
+  [base-url & argv]
   (let [client (create-es-client base-url)
-        env {:client client}
-        env-exec (partial execute env)]
-    (with-open [rdr (java-io/reader filename)]
-      (-> (line-seq rdr)
-          (tokenize)
-          (parse)
-          (env-exec)))))
+        env {:client client}]
+    (with-in-seq in-seq (first argv)
+      (execute-line-seq in-seq env))))

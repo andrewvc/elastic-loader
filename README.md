@@ -8,9 +8,9 @@ Current Version: [elastic-loader-0.2.0.jar](http://elastic-loader.s3.amazonaws.c
 
 ## Usage
 
-The basic usage is `java -jar elastic-loader.jar FILENAME SERVER_URL`
+The basic usage is `java -jar elastic-loader.jar SERVER_URL [FILENAME]`. The filename is optional, as input may also be read via STDIN.
 
-For example, you could run `java -jar elastic-loader.jar test_import http://localhost:9200` to load the data from the file `test_import` into the server at `http://localhost:9200`. Where `test_import` looks like:
+For example, you could run `java -jar elastic-loader.jar http://localhost:9200 test_import.txt` to load the data from the file `test_import.txt` into the server at `http://localhost:9200`. Where `test_import` looks like:
 
 ```
 # Issue an HTTP Request, without stopping due to failure
@@ -29,6 +29,8 @@ DELETE /foo/bar/4
 ```
 
 The format allows you to issue arbitrary HTTP requests and to use the bulk API to add new documents as well with a more concise format. You specify the index and document type once, and subsequent documents will be imported. Each document should probably specify the `_id` field unless you truly want random IDs from elasticsearch.
+
+Feel free to omit the filename and pipe data through STDIN as well. You could run `cat test_import.txt | java -jar elastic-loader.jar` as well.
 
 This project was created to aid the process of running examples for the book [Exploring Elasticsearch](http://exploring-elasticsearch.com).
 
