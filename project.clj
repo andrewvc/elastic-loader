@@ -1,5 +1,5 @@
-(defproject elastic-loader "0.1.0-SNAPSHOT"
-  :description "FIXME: write description"
+(defproject elastic-loader "0.2.0"
+  :description "A tool for importing docs into elasticsearch"
   :url "http://example.com/FIXME"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
@@ -12,4 +12,5 @@
                                                     com.sun.jmx/jmxri]]                 
                  [org.clojure/tools.logging "0.2.6"]
                  [clj-http "0.7.1"]]
+  :javac-options ["-target" "1.6" "-source" "1.6"],
   :main elastic-loader.core)
