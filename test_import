@@ -1,14 +1,13 @@
-# This is an example of the import format
 # Issue an HTTP Request, without stopping due to failure
 TRY DELETE /foo
 # Issue an HTTP request that will stop the import if it fails
 POST /foo {"_mapping": {}}
-# Bulk index items of time foo and bar
+# Bulk index items of type bar into the foo index
 BULK INDEX foo/bar
 {"user": "foo", "_id": 1}
 {"user": "baz", "_id": 3}
-# A comment, followed by an index request
-BULK INDEX foo/bar
-{"user": "bort"}
-{"ohai": "there", "_id": 4}
-DELETE /foo/bar/4
+# Bulk index items of type baz into the foo index
+BULK INDEX foo/baz
+{"ohai": "bort"}
+{"ohai": "there", "_id": 1}
+DELETE /foo/baz/1

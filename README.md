@@ -17,15 +17,15 @@ For example, you could run `java -jar elastic-loader.jar http://localhost:9200 t
 TRY DELETE /foo
 # Issue an HTTP request that will stop the import if it fails
 POST /foo {"_mapping": {}}
-# Bulk index items of time foo and bar
+# Bulk index items of type bar into the foo index
 BULK INDEX foo/bar
 {"user": "foo", "_id": 1}
 {"user": "baz", "_id": 3}
-# A comment, followed by an index request
-BULK INDEX foo/bar
-{"user": "bort"}
-{"ohai": "there", "_id": 4}
-DELETE /foo/bar/4
+# Bulk index items of type baz into the foo index
+BULK INDEX foo/baz
+{"ohai": "bort"}
+{"ohai": "there", "_id": 1}
+DELETE /foo/baz/1
 ```
 
 The format allows you to issue arbitrary HTTP requests and to use the bulk API to add new documents as well with a more concise format. You specify the index and document type once, and subsequent documents will be imported. Each document should probably specify the `_id` field unless you truly want random IDs from elasticsearch.
