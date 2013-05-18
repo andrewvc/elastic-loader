@@ -1,4 +1,4 @@
-(defproject elastic-loader "0.3.0"
+(defproject elastic-loader "0.3.1"
   :description "A tool for importing docs into elasticsearch"
   :url "https://github.com/andrewvc/elastic-loader"
   :license {:name "Eclipse Public License"

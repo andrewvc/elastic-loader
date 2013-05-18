@@ -27,7 +27,7 @@
 ;; The token-types for the grammar are defined here
 (def line-tokenizers
   [{:name :index-docs 
-    :match  #"BULK INDEX\s*(\w+)/(\w+)"
+    :match  #"BULK INDEX\s*([\w\-]+)/(\w+)"
     :format (fn [line matches] (rest matches))}
    {:name :http-req
     :match  #"(TRY |)(GET|POST|PUT|DELETE|HEAD)\s+(/[^ ]+)\s*(.*)"
@@ -158,9 +158,9 @@
              :body body})
     (catch Exception e
       (if is-try
-        (throw+ {:level :warn
+        (throw+ {:level :info
                  :type :mystuff
-                 :message (format "Ignoring error due to TRY. Error: %s" (.getMessage e))})
+                 :message (format "Encountered Expected Error, nothing to worry about, TRY ERROR: %s" (.getMessage e))})
         (do (log/fatal (str "ABORTING: " (.getMessage e)))
             (throw+ {:level :fatal :exception e}))))))
 
