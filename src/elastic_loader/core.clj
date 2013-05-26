@@ -159,7 +159,7 @@
     (catch Exception e
       (if is-try
         (throw+ {:level :info
-                 :type :mystuff
+                 :type :tryerror
                  :message (format "Encountered Expected Error, nothing to worry about, TRY ERROR: %s" (.getMessage e))})
         (do (log/fatal (str "ABORTING: " (.getMessage e)))
             (throw+ {:level :fatal :exception e}))))))
@@ -190,7 +190,7 @@
         st-executor (statement-executors st-type)]
     (try+
      (st-executor env statement)
-     (catch [:level :warn] {:keys [message]}
+     (catch [:level :info] {:keys [message]}
        (log/warn (format "Could not execute statement at line %d: %s"
                          line-num message))))))
 
