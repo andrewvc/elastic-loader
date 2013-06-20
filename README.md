@@ -6,7 +6,7 @@ This utility was written to support the [Exploring Elasticseach](http://explorin
 
 ## Download
 
-Current Version: [elastic-loader-0.3.0.jar](http://elastic-loader.s3.amazonaws.com/elastic-loader-0.3.0.jar)
+Current Version: [elastic-loader-0.3.2.jar](http://elastic-loader.s3.amazonaws.com/elastic-loader-0.3.2.jar)
 
 ## Usage
 
