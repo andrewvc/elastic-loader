@@ -1,6 +1,6 @@
 # elastic-loader
 
-A utility for bulk loading data into elasticsearch. It can also execute multiple commands in a simplified format. It's a single java jar with no external dependencies so it's easy to run.
+A utility for bulk loading data into elasticsearch. Loads its own `.eloader` format for elasticsearch data. It can also execute multiple commands in a simplified format. It's a single java jar with no external dependencies so it's easy to run.
 
 ## Download
 
