@@ -2,6 +2,8 @@
 
 A utility for bulk loading data into elasticsearch. Loads its own `.eloader` format for elasticsearch data. It can also execute multiple commands in a simplified format. It's a single java jar with no external dependencies so it's easy to run.
 
+This utility was written to support the [Exploring Elasticseach](http://exploringelasticsearch.com) book, which uses this utility for its [datasets](https://github.com/andrewvc/ee-datasets).  
+
 ## Download
 
 Current Version: [elastic-loader-0.3.0.jar](http://elastic-loader.s3.amazonaws.com/elastic-loader-0.3.0.jar)
